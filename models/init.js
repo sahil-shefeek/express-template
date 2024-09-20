@@ -1,4 +1,4 @@
-import { pool_options } from "../config/database.config";
+import { pool_options } from "../config/database.config.js";
 
 const pool = mysql.createPool(pool_options).promise();
 
