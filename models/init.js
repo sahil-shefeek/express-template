@@ -1,3 +1,4 @@
+import mysql from "mysql2";
 import { pool_options } from "../config/database.config.js";
 
 const pool = mysql.createPool(pool_options).promise();
