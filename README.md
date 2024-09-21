@@ -21,6 +21,12 @@ Here’s what comes pre-configured in this template:
 
 ---
 
+## Frontend Companion Available
+
+This repository includes a companion frontend built with **React** and the **Vite** build system. The frontend serves as a user interface to interact with the APIs defined in this Express starter template. For more details, check the frontend repository [here](https://github.com/sahil-shefeek/express-template-frontend.git).
+
+---
+
 ## Step-by-Step Guide to Get Started
 
 ### 1. Use This Repository as a Template
