@@ -1,45 +1,74 @@
-# Express Starter Template
+<div align=center><h1>Express Starter Template</h1></div>
 
-This Express starter template is designed to be a flexible and scalable foundation for building RESTful APIs with Express.js and MySQL.
+This Express starter template is a beginner-friendly foundation for building RESTful APIs using **Express.js** and **MySQL**. Whether you're building APIs for employees, products, or users, this template makes it easy to get started by providing essential tools like CORS, request logging, error handling, and a modular routing structure.
 
-It includes CORS support, request logging with Morgan, error handling, and a modular routing structure.
-
-> The setup is fully customizable to handle various entities (such as employees, products, users, etc.) by simply modifying or adding to the provided routes and controllers.
+> **Tip:** Think of this template as a blueprint you can easily modify to fit any kind of project you’re working on—just adjust the routes and controllers to handle whatever data (employees, products, users, etc.) you need!
 
 ---
 
-## What's in the box?
+## What's Inside?
 
-- **Modular API Routes**: Easily create custom API routes for different entities (e.g., employees, products, users).
-- **Customizable CRUD Operations**: Routes and controllers for creating, reading, updating, and deleting entities, which can be easily extended to handle any new entity.
-- **MySQL Database Integration**: Simplified database setup, including automatic table creation and triggers.
-- **Error Handling Middleware**: Built-in middleware to catch and handle errors gracefully.
+Here’s what comes pre-configured in this template:
+
+- **Express** framework for building your backend.
+- **MySQL** adapter (mysql2) for handling database operations.
+  - > If you use another database like PostgreSQL or Oracle, try changing the adapter and you're good to go!.
+- **CORS** support with customizable options (allowing your API to handle requests from different domains).
+  - > See `config/cors.config.js` for more info
+- **Morgan** for logging all HTTP requests, which is useful for debugging and monitoring.
+- **Modular API routes** to help organize your code as it grows.
+- **Environment variables** using dotenv for easy configuration of sensitive data (like database credentials).
 
 ---
 
-## Getting Started
+## Step-by-Step Guide to Get Started
 
-### 1. Clone the Repository
+### 1. Use This Repository as a Template
 
-```bash
-git clone https://github.com/sahil-shefeek/express-template
-cd express-template
-```
+This template repository allows you to create your own repository without inheriting any unwanted commit history or configuration files from the template.
 
-### 2. Install Dependencies
+Here’s how:
 
-Make sure you have [Node.js](https://nodejs.org/) installed, then run the following command:
+1. **Click "Use this template"** on the GitHub page for this repository.
+   - You’ll see a green button on the top-right. Click it to create a copy.
+   - **Note:** Make sure you're signed in to GitHub to see the "Use this template" button.
+2. **Name your new repository** (e.g., `my-express-api`).
+3. **Clone your new repository** to your local machine:
+   ```bash
+   git clone https://github.com/<your-username>/<your-repo-name>.git
+   ```
+4. **Navigate to the project directory**:
+   ```bash
+   cd <your-repo-name>
+   ```
+
+> **Reminder**: Don’t just clone the original repository. By using the "Use this template" button, you avoid carrying over the original project’s git history.
+
+---
+
+### 2. Install Project Dependencies
+
+Make sure you have [Node.js](https://nodejs.org/) installed. It’s what powers JavaScript code outside of the browser. Once Node.js is installed, you can install this project’s dependencies:
 
 ```bash
 npm install
 ```
 
-### 3. Setup Environment Variables
+This will install all the libraries and modules you need, like Express, MySQL, CORS, Morgan, etc.
 
-Create a `.env` file in the root directory with the following content:
+---
+
+### 3. Set Up Environment Variables
+
+Your app needs certain information to connect to the MySQL database, determine which port to run on, and so on. This information is stored in a file called `.env`, which you need to create yourself.
+
+Here’s an example of what your `.env` file should look like:
 
 ```env
+# Server settings
 PORT=8000
+
+# MySQL database connection
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWD=password
@@ -47,177 +76,536 @@ DB_NAME=defaultdb
 DB_PORT=3306
 ```
 
-You can adjust these values based on your environment and database configuration.
+#### Explanation of Each Variable:
+
+- **PORT**: The port where your Express server will run (e.g., `8000`).
+- **DB_HOST**: Where your MySQL server is hosted (usually `localhost`).
+- **DB_USER**: Your MySQL username (e.g., `root`).
+- **DB_PASSWD**: Your MySQL password.
+- **DB_NAME**: The database you want to connect to (e.g., `defaultdb`).
+- **DB_PORT**: The port on which MySQL is running (usually `3306`).
+
+Create this file in the root folder of your project.
+
+---
 
 ### 4. Initialize the Database
 
-To create the necessary tables and triggers in MySQL, run:
+This template sets up tables like `employees` and `departments` with triggers to manage employee counts. To create these tables, run:
 
 ```bash
 npm run init
 ```
 
-This initializes the `employees` and `department` tables, as well as triggers for automatic updates of employee counts in departments.
+This command will execute a script that connects to your MySQL database and sets up the necessary tables and triggers for managing employee and department data.
 
-### 5. Run the Server
+---
 
-To start the server in development mode, use:
+### 5. Running the Server
+
+To start the server in development mode (which automatically reloads when you make changes), run:
 
 ```bash
 npm run dev
 ```
 
-The server will automatically load environment variables from your `.env` file.
+Your server will now be running on the port specified in your `.env` file (e.g., `8000`). You can visit your API at `http://localhost:8000`.
 
 ---
 
-## API Customization Example
+## Customizing the API for Your Needs
 
-This template comes with example routes and controllers for managing **employees**. You can easily customize the API for other entities like products, users, etc.
+This template provides example routes and controllers for managing **employees**. You can easily modify these or add new routes to handle other types of data, such as **products**, **users**, or **orders**.
 
-Here's how the **Employee API** works, and how you can generalize it for your own needs.
+---
 
-### Example: Employee API
+### Walkthrough: How the Employee API Works
 
-#### File: `routes/employees.js`
+The template already includes an example for managing employees. Here's how it's structured:
+
+1. **Routes**: These define how API requests (e.g., `GET`, `POST`) are handled.
+
+   - You can find the routes in `routes/employees.js`.
+   - For example, when a request is made to `GET /employees`, the `getAllEmployees` function in the controller is called.
+
+2. **Controller**: This is where the actual logic for fetching data, adding employees, or retrieving specific employee information lives.
+   - The template has a controller in `controllers/employeeController.js` that handles actions like `getAllEmployees()` and `getEmployee()`.
+
+---
+
+### Adding New Routes for Other Entities
+
+Let’s say you want to add a new entity, like **products**. Here’s how you can do that:
+
+#### 1. Create a New Router
+
+You’ll define your new routes in a file like `routes/products.js`:
 
 ```js
 import express from "express";
 import {
-  getAllEmployees,
-  getEmployee,
-  addNewEmployee,
-  updateEmployee,
-  deleteEmployee,
-} from "../../controllers/employeeController.js";
-import { v4 as uuid } from "uuid";
+  getAllProducts,
+  getProduct,
+  addNewProduct,
+} from "../controllers/productController.js";
 
-export const employeeRouter = express.Router();
+const productRouter = express.Router();
 
-employeeRouter
+productRouter
   .route("/")
-  .get(async (req, res) => {
-    if (req.query?.e_no) {
-      res.json(await getEmployee(req.query.e_no));
-    } else {
-      res.json(await getAllEmployees());
-    }
-  })
-  .post(async (req, res) => {
-    const employeeDetails = {
-      e_no: uuid(), // Generates a unique ID for each employee
-      e_name: req.body.e_name,
-      salary: req.body.salary,
-      d_no: req.body.d_no,
-      mgr_no: req.body.mgr_no,
-      date_of_join: req.body.date_of_join,
-      designation: req.body.designation,
-      address: req.body.address,
-      city: req.body.city,
-      pincode: req.body.pincode,
-    };
+  .get(getAllProducts) // Get all products
+  .post(addNewProduct); // Add a new product
 
-    try {
-      await addNewEmployee(employeeDetails);
-      const addedEmployeeDetails = await getEmployee(employeeDetails.e_no);
-      res
-        .status(201)
-        .json({
-          message: "Employee added successfully!",
-          ...addedEmployeeDetails,
-        });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: "Failed to add employee", error: error.message });
-    }
-  });
+productRouter.route("/:id").get(getProduct); // Get product by ID
 
-employeeRouter
-  .route("/:e_no")
-  .get(async (req, res) => {
-    try {
-      const employee = await getEmployee(req.params.e_no);
-      res.status(200).json(employee);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  })
-  .patch(async (req, res) => {
-    const updatedDetails = {
-      ...(req.body.e_name ? { e_name: req.body.e_name } : {}),
-      ...(req.body.salary ? { salary: req.body.salary } : {}),
-      ...(req.body.d_no ? { d_no: req.body.d_no } : {}),
-      ...(req.body.mgr_no ? { mgr_no: req.body.mgr_no } : {}),
-      ...(req.body.date_of_join ? { date_of_join: req.body.date_of_join } : {}),
-      ...(req.body.designation ? { designation: req.body.designation } : {}),
-      ...(req.body.address ? { address: req.body.address } : {}),
-      ...(req.body.city ? { city: req.body.city } : {}),
-      ...(req.body.pincode ? { pincode: req.body.pincode } : {}),
-    };
-
-    try {
-      await updateEmployee(req.params.e_no, updatedDetails);
-      const updatedEmployee = await getEmployee(req.params.e_no);
-      res.status(200).json(updatedEmployee);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  })
-  .delete(async (req, res) => {
-    try {
-      await deleteEmployee(req.params.e_no);
-      res.status(204).json({ message: "Employee deleted successfully!" });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  });
+export { productRouter };
 ```
+
+#### 2. Register the Router in `api.js`
+
+Open `routes/api.js` and add the new router:
+
+```js
+import express from "express";
+import { productRouter } from "./products.js";
+
+const apiRouter = express.Router();
+
+// Use the product router for all /products requests
+apiRouter.use("/products", productRouter);
+
+export { apiRouter };
+```
+
+---
 
 ### Customizing for Other Entities
 
-If you want to manage other entities (e.g., products, users, etc.), you can replicate the structure used for employees:
+Want to add another type of data, like **orders**? Just follow the same steps:
 
-1. **Create a Controller**: Add a controller file that defines functions for CRUD operations (e.g., `getAllProducts`, `addNewProduct`, etc.).
-2. **Create a Router**: Add a new router in `routes/`, following the same pattern used in `employeeRouter`.
-3. **Database Setup**: Ensure the necessary tables and triggers are created in your MySQL database.
-
-### Example: Product API (Outline)
-
-- **Controller**: `controllers/productController.js`
-
-  - `getAllProducts()`
-  - `getProduct(productID)`
-  - `addNewProduct(productDetails)`
-  - `updateProduct(productID, productDetails)`
-  - `deleteProduct(productID)`
-
-- **Router**: `routes/products.js`
-  - Define routes similar to the employee example.
+1. **Create a Controller**: Add CRUD operations in a new controller file (e.g., `controllers/orderController.js`).
+2. **Create a Router**: Define the routes for handling `GET`, `POST`, etc., requests in a new router (e.g., `routes/orders.js`).
+3. **Register the router** in `api.js`
+4. **Database Setup**: Ensure your database has the necessary tables and relationships.
 
 ---
 
-## Environment Setup
+This template is meant to be flexible and grow with your project. Whether you're adding more routes, customizing controllers, or connecting to a more complex database, this setup gives you a strong foundation to build from.
 
-### `.env` File Example
+---
 
-Here's an example `.env` file to configure the server and MySQL connection:
+### Sample API Documentation
 
-```env
-PORT=8000
-DB_HOST=localhost
-DB_USER=root
-DB_PASSWD=yourpassword
-DB_NAME=yourdbname
-DB_PORT=3306
+This API provides access to manage the `employees` resource in the system.
+
+#### Base URL:
+
+```
+/api/employees
 ```
 
-Make sure to adjust the values as per your local or production setup.
+---
+
+#### **1. GET All Employees**
+
+##### Endpoint:
+
+```
+GET /api/employees
+```
+
+##### Description:
+
+Fetches all employees from the database.
+
+##### Response:
+
+- **200 OK**: A list of all employees in JSON format.
+
+```json
+[
+  {
+    "e_no": "unique-employee-id",
+    "e_name": "Employee Name",
+    "salary": 50000,
+    "d_no": "department-id",
+    "mgr_no": "manager-id",
+    "date_of_join": "YYYY-MM-DD",
+    "designation": "Job Title",
+    "address": "Employee address",
+    "city": "City",
+    "pincode": "Postal Code"
+  }
+]
+```
+
+##### Errors:
+
+- **500 Internal Server Error**: Server failed to process the request.
 
 ---
 
-## Error Handling
+#### **2. GET Single Employee**
 
-The template includes a centralized error handler middleware that catches and processes errors. It ensures that the server responds with a meaningful message in case of any issues, like invalid requests or database errors.
+##### Endpoint:
+
+```
+GET /api/employees/:e_no
+```
+
+##### Description:
+
+Fetches the details of a specific employee based on their `e_no`.
+
+##### Request:
+
+- **URL Parameter**: `e_no` (string) – The unique identifier for the employee.
+
+##### Response:
+
+- **200 OK**: Details of the requested employee in JSON format.
+
+```json
+{
+  "e_no": "unique-employee-id",
+  "e_name": "Employee Name",
+  "salary": 50000,
+  "d_no": "department-id",
+  "mgr_no": "manager-id",
+  "date_of_join": "YYYY-MM-DD",
+  "designation": "Job Title",
+  "address": "Employee address",
+  "city": "City",
+  "pincode": "Postal Code"
+}
+```
+
+##### Errors:
+
+- **404 Not Found**: Employee with the given `e_no` does not exist.
+- **500 Internal Server Error**: Server failed to process the request.
 
 ---
+
+#### **3. POST Add New Employee**
+
+##### Endpoint:
+
+```
+POST /api/employees
+```
+
+##### Description:
+
+Adds a new employee to the database.
+
+##### Request:
+
+- **Body Parameters**:
+
+```json
+{
+  "e_name": "Employee Name",
+  "salary": 50000,
+  "d_no": "department-id",
+  "mgr_no": "manager-id",
+  "date_of_join": "YYYY-MM-DD",
+  "designation": "Job Title",
+  "address": "Employee address",
+  "city": "City",
+  "pincode": "Postal Code"
+}
+```
+
+##### Response:
+
+- **201 Created**: The employee is successfully created.
+
+```json
+{
+  "message": "Success!",
+  "e_no": "unique-employee-id",
+  "e_name": "Employee Name",
+  "salary": 50000
+}
+```
+
+##### Errors:
+
+- **400 Bad Request**: Missing or invalid fields.
+- **500 Internal Server Error**: Server failed to process the request.
+- **Foreign Key Error**: When `d_no` (department ID) does not exist.
+
+---
+
+#### **4. PATCH Update Employee**
+
+##### Endpoint:
+
+```
+PATCH /api/employees/:e_no
+```
+
+##### Description:
+
+Updates an employee's details based on their `e_no`.
+
+##### Request:
+
+- **URL Parameter**: `e_no` (string) – The unique identifier for the employee.
+- **Body Parameters** (only the fields that need updating):
+
+```json
+{
+  "e_name": "New Employee Name",
+  "salary": 60000,
+  "d_no": "new-department-id"
+}
+```
+
+##### Response:
+
+- **200 OK**: Updated employee details.
+
+```json
+{
+  "e_no": "unique-employee-id",
+  "e_name": "Updated Employee Name",
+  "salary": 60000
+}
+```
+
+##### Errors:
+
+- **404 Not Found**: Employee with the given `e_no` does not exist.
+- **400 Bad Request**: Missing or invalid fields.
+- **Foreign Key Error**: When `d_no` (department ID) does not exist.
+
+---
+
+#### **5. DELETE Employee**
+
+##### Endpoint:
+
+```
+DELETE /api/employees/:e_no
+```
+
+##### Description:
+
+Deletes an employee from the database based on their `e_no`.
+
+##### Request:
+
+- **URL Parameter**: `e_no` (string) – The unique identifier for the employee.
+
+##### Response:
+
+- **204 No Content**: Employee deleted successfully.
+
+##### Errors:
+
+- **404 Not Found**: Employee with the given `e_no` does not exist.
+- **500 Internal Server Error**: Server failed to process the request.
+
+---
+
+### Department API Documentation
+
+This API allows management of `departments` in the system.
+
+#### Base URL:
+
+```
+/api/departments
+```
+
+---
+
+#### **1. GET All Departments**
+
+##### Endpoint:
+
+```
+GET /api/departments
+```
+
+##### Description:
+
+Fetches all departments from the database.
+
+##### Response:
+
+- **200 OK**: A list of all departments in JSON format.
+
+```json
+[
+  {
+    "d_no": "department-id",
+    "d_name": "Department Name",
+    "no_of_employees": 10,
+    "dept_hod": "Head of Department Name"
+  }
+]
+```
+
+##### Errors:
+
+- **500 Internal Server Error**: Server failed to process the request.
+
+---
+
+#### **2. GET Single Department**
+
+##### Endpoint:
+
+```
+GET /api/departments/:d_no
+```
+
+##### Description:
+
+Fetches the details of a specific department based on their `d_no`.
+
+##### Request:
+
+- **URL Parameter**: `d_no` (string) – The unique identifier for the department.
+
+##### Response:
+
+- **200 OK**: Details of the requested department in JSON format.
+
+```json
+{
+  "d_no": "department-id",
+  "d_name": "Department Name",
+  "no_of_employees": 10,
+  "dept_hod": "Head of Department Name"
+}
+```
+
+##### Errors:
+
+- **404 Not Found**: Department with the given `d_no` does not exist.
+- **500 Internal Server Error**: Server failed to process the request.
+
+---
+
+#### **3. POST Add New Department**
+
+##### Endpoint:
+
+```
+POST /api/departments
+```
+
+##### Description:
+
+Adds a new department to the database.
+
+##### Request:
+
+- **Body Parameters**:
+
+```json
+{
+  "d_name": "Department Name",
+  "dept_hod": "Head of Department Name"
+}
+```
+
+##### Response:
+
+- **201 Created**: The department is successfully created.
+
+```json
+{
+  "message": "Success!",
+  "d_no": "unique-department-id",
+  "d_name": "Department Name"
+}
+```
+
+##### Errors:
+
+- **400 Bad Request**: Missing or invalid fields.
+- **500 Internal Server Error**: Server failed to process the request.
+
+---
+
+#### **4. PATCH Update Department**
+
+##### Endpoint:
+
+```
+PATCH /api/departments/:d_no
+```
+
+##### Description:
+
+Updates a department's details based on their `d_no`.
+
+##### Request:
+
+- **URL Parameter**: `d_no` (string) – The unique identifier for the department.
+- **Body Parameters** (only the fields that need updating):
+
+```json
+{
+  "d_name": "Updated Department Name",
+  "dept_hod": "Updated HOD Name"
+}
+```
+
+##### Response:
+
+- **200 OK**: Updated department details.
+
+```json
+{
+  "d_no": "unique-department-id",
+  "d_name": "Updated Department Name",
+  "dept_hod": "Updated HOD Name"
+}
+```
+
+##### Errors:
+
+- **404 Not Found**: Department with the given `d_no` does not exist.
+- **400 Bad Request**: Missing or invalid fields.
+
+---
+
+#### **5. DELETE Department**
+
+##### Endpoint:
+
+```
+DELETE /api/departments/:d_no
+```
+
+##### Description:
+
+Deletes a department from the database based on their `d_no`.
+
+##### Request:
+
+- **URL Parameter**: `d_no` (string) – The unique identifier for the department.
+
+##### Response:
+
+- **204 No Content**: Department deleted successfully.
+
+##### Errors:
+
+- **404 Not Found**: Department with the given `d_no` does not exist.
+- **500 Internal Server Error**: Server failed to process the request.
+
+---
+
+### Error Codes and Responses
+
+- **404 Not Found**: The requested resource (employee or department) does not exist.
+- **400 Bad Request**: The request contains invalid or missing fields.
+- **500 Internal Server Error**: A server error occurred during processing.
+- **Foreign Key Constraint Error**: When trying to add or update an employee with an invalid department or manager.
