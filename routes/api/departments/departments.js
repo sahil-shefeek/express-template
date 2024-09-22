@@ -1,3 +1,4 @@
+// routes/departments.js
 import express from "express";
 import {
   getAllDepartments,
@@ -7,84 +8,23 @@ import {
   deleteDepartment,
 } from "../../../controllers/departments/departmentController.js";
 import { v4 as uuid } from "uuid";
+import { departmentValidator } from "../../../middleware/departments/departmentValidator.js";
 
 export const departmentRouter = express.Router();
 
-// GET all departments or a specific department by d_no
-departmentRouter.route("/").get(async (req, res) => {
-  try {
-    if (req.query?.d_no) {
-      const department = await getDepartment(req.query.d_no);
-      res.json(department);
-    } else {
-      const departments = await getAllDepartments();
-      res.json(departments);
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+departmentRouter
+  .route("/")
+  .get(getAllDepartments)
+  .post(departmentValidator, async (req, res, next) => {
+    req.body.d_no = uuid(); // Assign a unique ID
+    addNewDepartment(req, res, next);
+  });
 
-// POST a new department
-departmentRouter.route("/").post(async (req, res) => {
-  try {
-    const departmentDetails = {
-      d_no: uuid(),
-      d_name: req.body.d_name,
-      dept_hod: req.body.dept_hod,
-    };
-    const newDepartment = await addNewDepartment(departmentDetails);
-    res
-      .status(201)
-      .json({ message: "Department created successfully", newDepartment });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+departmentRouter
+  .route("/:d_no")
+  .get(getDepartment)
+  .patch(departmentValidator, updateDepartment)
+  .put(departmentValidator, updateDepartment)
+  .delete(deleteDepartment);
 
-// PATCH to update specific fields of a department
-departmentRouter.route("/:d_no").patch(async (req, res) => {
-  try {
-    const updatedDepartmentDetails = {
-      ...(req.body?.d_name ? { d_name: req.body?.d_name } : {}),
-      ...(req.body?.dept_hod ? { dept_hod: req.body?.dept_hod } : {}),
-    };
-    const updatedDepartment = await updateDepartment(
-      req.params.d_no,
-      updatedDepartmentDetails
-    );
-    res.json(updatedDepartment);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// PUT to fully update the department details
-departmentRouter.route("/:d_no").put(async (req, res) => {
-  try {
-    const updatedDepartmentDetails = {
-      d_name: req.body.d_name,
-      dept_hod: req.body.dept_hod,
-    };
-    const updatedDepartment = await updateDepartment(
-      req.params.d_no,
-      updatedDepartmentDetails
-    );
-    res.json({
-      message: "Department updated successfully",
-      updatedDepartment,
-    });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-// DELETE a department by d_no
-departmentRouter.route("/:d_no").delete(async (req, res) => {
-  try {
-    const result = await deleteDepartment(req.params.d_no);
-    res.json(result);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+export default departmentRouter;
