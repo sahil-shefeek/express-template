@@ -1,131 +1,52 @@
-import { query } from "../../services/db.js";
+import employees from "../../models/employees/employees.js";
 
-export const getAllEmployees = async () => {
+export const getAllEmployees = async (req, res, next) => {
   try {
-    return await query("SELECT * FROM employees");
+    const employeeList = await employees.getAll();
+    res.json(employeeList);
   } catch (error) {
-    throw new Error("Failed to fetch employees.");
+    next(error);
   }
 };
 
-export const getEmployee = async (id) => {
+export const getEmployee = async (req, res, next) => {
   try {
-    const res = await query("SELECT * FROM employees WHERE e_no = ?", [id]);
-    if (res.length < 1) {
-      throw { status: 404, message: "Employee not found" };
-    }
-    return res[0];
+    const employee = await employees.get(req.params.e_no);
+    res.json(employee);
   } catch (error) {
-    throw new Error(error.message || "Failed to fetch employee.");
+    next(error);
   }
 };
 
-export const addNewEmployee = async (employeeDetails) => {
-  const {
-    e_no,
-    e_name,
-    salary,
-    d_no,
-    mgr_no,
-    date_of_join,
-    designation,
-    address,
-    city,
-    pincode,
-  } = employeeDetails;
-
+export const addNewEmployee = async (req, res, next) => {
   try {
-    const res = await query(
-      `INSERT INTO employees (e_no, e_name, salary, d_no, mgr_no, date_of_join, designation, address, city, pincode)
-      VALUES (?, ?, ?, ?, ?, ?, ? ,? ,?, ?)`,
-      [
-        e_no,
-        e_name,
-        salary,
-        d_no,
-        mgr_no,
-        date_of_join,
-        designation,
-        address,
-        city,
-        pincode,
-      ]
-    );
-    return res;
-  } catch (error) {
-    if (error.errno === 1452) {
-      throw new Error(
-        "Invalid department number. Please provide a valid department."
-      );
-    }
-    throw new Error("Error adding new employee: " + error.message);
-  }
-};
-
-export const updateEmployee = async (id, updatedEmployeeDetails) => {
-  const [oldEmployeeDetails] = await query(
-    `SELECT * FROM employees WHERE e_no = ?`,
-    [id]
-  );
-
-  if (oldEmployeeDetails === undefined) {
-    throw new Error("Employee with that details does not exist");
-  }
-
-  try {
-    const employeeDetails = {
-      ...oldEmployeeDetails,
-      ...updatedEmployeeDetails,
+    const newEmployee = {
+      e_no: req.body.e_no,
+      ...req.body,
     };
-
-    const {
-      e_no,
-      e_name,
-      salary,
-      d_no,
-      mgr_no,
-      date_of_join,
-      designation,
-      address,
-      city,
-      pincode,
-    } = employeeDetails;
-
-    const res = await query(
-      `UPDATE employees 
-       SET e_name = ?, salary = ?, d_no = ?, mgr_no = ?, date_of_join = ?, designation = ?, address = ?, city = ?, pincode = ? 
-       WHERE e_no = ?`,
-      [
-        e_name,
-        salary,
-        d_no,
-        mgr_no,
-        date_of_join,
-        designation,
-        address,
-        city,
-        pincode,
-        e_no,
-      ]
-    );
-    return res;
+    await employees.add(newEmployee);
+    const addedEmployee = await employees.get(newEmployee.e_no);
+    res.status(201).json({ message: "Success!", ...addedEmployee });
   } catch (error) {
-    if (error.errno === 1452) {
-      throw new Error(
-        "Invalid department number. Please provide a valid department."
-      );
-    }
-    throw new Error("Error updating employee details: " + error.message);
+    next(error);
   }
 };
 
-export const deleteEmployee = async (e_no) => {
+export const updateEmployee = async (req, res, next) => {
   try {
-    const result = await query("DELETE FROM employees WHERE e_no = ?", [e_no]);
-    if (result.affectedRows === 0) {
-      throw { status: 404, message: "Employee not found" };
-    }
+    await employees.update(req.params.e_no, req.body);
+    const updatedEmployee = await employees.get(req.params.e_no);
+    res.json({ message: "Employee updated successfully", updatedEmployee });
   } catch (error) {
-    throw { status: 500, message: "Failed to delete employee" };
+    next(error);
+  }
+};
+
+export const deleteEmployee = async (req, res, next) => {
+  try {
+    await employees.remove(req.params.e_no);
+    res.status(204).end();
+  } catch (error) {
+    next(error);
   }
 };

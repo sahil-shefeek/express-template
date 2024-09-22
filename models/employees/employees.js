@@ -1,28 +1,76 @@
-import mysql from "mysql2";
-import { pool_options } from "../../config/database.config.js";
+import { query } from "../../services/db.js";
 
-const pool = mysql.createPool(pool_options).promise();
+const getAll = async () => {
+  return await query("SELECT * FROM employees");
+};
 
-export const createEmployeesTable = async () => {
-  try {
-    await pool.query(
-      `CREATE TABLE employees(
-        e_no VARCHAR(36) PRIMARY KEY,
-        e_name VARCHAR(52) NOT NULL,
-        salary DECIMAL(10, 3) CHECK (salary > 0),
-        d_no VARCHAR(36),
-        mgr_no VARCHAR(36),
-        date_of_join DATE,
-        designation VARCHAR(36),
-        address VARCHAR(50),
-        city VARCHAR(8) CHECK (city IN ('Cochin', 'Mumbai', 'Chennai', 'Delhi')),
-        pincode VARCHAR(7),
-        FOREIGN KEY (d_no) REFERENCES departments(d_no)
-      )`
-    );
-    console.log("Employees table created successfully.");
-  } catch (error) {
-    console.error("Failed to create employees table:", error.message);
-    throw new Error(error.message);
+const get = async (id) => {
+  const res = await query("SELECT * FROM employees WHERE e_no = ?", [id]);
+  if (res.length < 1) {
+    throw { status: 404, message: "Employee not found" };
+  }
+  return res[0];
+};
+
+const add = async (employeeDetails) => {
+  const {
+    e_no,
+    e_name,
+    salary,
+    d_no,
+    mgr_no,
+    date_of_join,
+    designation,
+    address,
+    city,
+    pincode,
+  } = employeeDetails;
+
+  const res = await query(
+    `INSERT INTO employees (e_no, e_name, salary, d_no, mgr_no, date_of_join, designation, address, city, pincode)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      e_no,
+      e_name,
+      salary,
+      d_no,
+      mgr_no,
+      date_of_join,
+      designation,
+      address,
+      city,
+      pincode,
+    ]
+  );
+  return res;
+};
+
+const update = async (id, employeeDetails) => {
+  const res = await query(
+    `UPDATE employees 
+     SET e_name = ?, salary = ?, d_no = ?, mgr_no = ?, date_of_join = ?, designation = ?, address = ?, city = ?, pincode = ? 
+     WHERE e_no = ?`,
+    [
+      employeeDetails.e_name,
+      employeeDetails.salary,
+      employeeDetails.d_no,
+      employeeDetails.mgr_no,
+      employeeDetails.date_of_join,
+      employeeDetails.designation,
+      employeeDetails.address,
+      employeeDetails.city,
+      employeeDetails.pincode,
+      id,
+    ]
+  );
+  return res;
+};
+
+const remove = async (id) => {
+  const result = await query("DELETE FROM employees WHERE e_no = ?", [id]);
+  if (result.affectedRows === 0) {
+    throw { status: 404, message: "Employee not found" };
   }
 };
+
+export default { getAll, get, add, update, remove };
