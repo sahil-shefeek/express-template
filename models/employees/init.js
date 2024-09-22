@@ -3,7 +3,7 @@ import { pool_options } from "../../config/database.config.js";
 
 const pool = mysql.createPool(pool_options).promise();
 
-export const createEmployeesTable = async () => {
+const createEmployeesTable = async () => {
   try {
     await pool.query(
       `CREATE TABLE employees(
@@ -26,3 +26,5 @@ export const createEmployeesTable = async () => {
     throw new Error(error.message);
   }
 };
+
+export default createEmployeesTable;

@@ -3,7 +3,7 @@ import { pool_options } from "../../config/database.config.js";
 
 const pool = mysql.createPool(pool_options).promise();
 
-export const initEmployeesCountTriggers = async () => {
+const initEmployeesCountTriggers = async () => {
   try {
     await pool.query(
       `CREATE TRIGGER increment_employees_count
@@ -33,3 +33,5 @@ export const initEmployeesCountTriggers = async () => {
     console.error("Failed to create decrement trigger:", error.message);
   }
 };
+
+export default initEmployeesCountTriggers;

@@ -3,7 +3,7 @@ import { pool_options } from "../../config/database.config.js";
 
 const pool = mysql.createPool(pool_options).promise();
 
-export const createDepartmentsTable = async () => {
+const createDepartmentsTable = async () => {
   try {
     await pool.query(
       `CREATE TABLE departments(
@@ -19,3 +19,5 @@ export const createDepartmentsTable = async () => {
     throw new Error(error.message);
   }
 };
+
+export default createDepartmentsTable;
