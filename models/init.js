@@ -1,6 +1,6 @@
-import { createDepartmentsTable } from "./departments/departments.js";
-import { createEmployeesTable } from "./employees/employees.js";
-import { initEmployeesCountTriggers } from "./employees/triggers.js";
+import createDepartmentsTable from "./departments/init.js";
+import createEmployeesTable from "./employees/init.js";
+import initEmployeesCountTriggers from "./employees/init_triggers.js";
 
 const initDatabase = async () => {
   await createDepartmentsTable();
