@@ -1,4 +1,3 @@
-// routes/departments.js
 import express from "express";
 import {
   getAllDepartments,
@@ -15,10 +14,7 @@ export const departmentRouter = express.Router();
 departmentRouter
   .route("/")
   .get(getAllDepartments)
-  .post(departmentValidator, async (req, res, next) => {
-    req.body.d_no = uuid(); // Assign a unique ID
-    addNewDepartment(req, res, next);
-  });
+  .post(departmentValidator, addNewDepartment);
 
 departmentRouter
   .route("/:d_no")
