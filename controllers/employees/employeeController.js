@@ -1,52 +1,111 @@
 import employees from "../../models/employees/employees.js";
 
-export const getAllEmployees = async (req, res, next) => {
+export const getAllEmployees = async (req, res) => {
   try {
     const employeeList = await employees.getAll();
     res.json(employeeList);
   } catch (error) {
-    next(error);
+    res.status(500).json({ error: "Error retrieving employees" });
   }
 };
 
-export const getEmployee = async (req, res, next) => {
+export const getEmployee = async (req, res) => {
   try {
     const employee = await employees.get(req.params.e_no);
     res.json(employee);
   } catch (error) {
-    next(error);
+    if (error.status === 404) {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Error retrieving employee" });
+    }
   }
 };
 
-export const addNewEmployee = async (req, res, next) => {
+export const addNewEmployee = async (req, res) => {
+  const e_no = uuid();
+  const {
+    e_name,
+    salary,
+    d_no,
+    mgr_no,
+    date_of_join,
+    designation,
+    address,
+    city,
+    pincode,
+  } = req.body;
+
   try {
     const newEmployee = {
-      e_no: req.body.e_no,
-      ...req.body,
+      e_no,
+      e_name,
+      salary,
+      d_no,
+      mgr_no,
+      date_of_join,
+      designation,
+      address,
+      city,
+      pincode,
     };
     await employees.add(newEmployee);
-    const addedEmployee = await employees.get(newEmployee.e_no);
-    res.status(201).json({ message: "Success!", ...addedEmployee });
+    const addedEmployee = await employees.get(e_no);
+    res.status(201).json({
+      addedEmployee,
+    });
   } catch (error) {
-    next(error);
+    res.status(500).json({ error: "Error adding employee" });
   }
 };
 
-export const updateEmployee = async (req, res, next) => {
+export const updateEmployee = async (req, res) => {
+  const {
+    e_name,
+    salary,
+    d_no,
+    mgr_no,
+    date_of_join,
+    designation,
+    address,
+    city,
+    pincode,
+  } = req.body;
+
   try {
-    await employees.update(req.params.e_no, req.body);
+    await employees.update(req.params.e_no, {
+      e_name,
+      salary,
+      d_no,
+      mgr_no,
+      date_of_join,
+      designation,
+      address,
+      city,
+      pincode,
+    });
     const updatedEmployee = await employees.get(req.params.e_no);
-    res.json({ message: "Employee updated successfully", updatedEmployee });
+    res.json({
+      updatedEmployee,
+    });
   } catch (error) {
-    next(error);
+    if (error.status === 404) {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Error updating employee" });
+    }
   }
 };
 
-export const deleteEmployee = async (req, res, next) => {
+export const deleteEmployee = async (req, res) => {
   try {
     await employees.remove(req.params.e_no);
     res.status(204).end();
   } catch (error) {
-    next(error);
+    if (error.status === 404) {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: "Error deleting employee" });
+    }
   }
 };
