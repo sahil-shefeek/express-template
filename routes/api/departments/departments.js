@@ -6,7 +6,6 @@ import {
   updateDepartment,
   deleteDepartment,
 } from "../../../controllers/departments/departmentController.js";
-import { v4 as uuid } from "uuid";
 import { departmentValidator } from "../../../middleware/departments/departmentValidator.js";
 
 export const departmentRouter = express.Router();
