@@ -1,4 +1,4 @@
-import whitelist from "./whitelist";
+import whitelist from "./whitelist.js";
 const credentials = (req, res, next) => {
   const origin = req.headers.origin;
   if (whitelist.some((pattern) => pattern.test(origin))) {

@@ -13,7 +13,7 @@
  *  In this case, the whitelist includes localhost and 127.0.0.1 for development purposes.
  */
 
-import whitelist from "./whitelist";
+import whitelist from "./whitelist.js";
 
 export const corsOptions = {
   origin: (origin, callback) => {
