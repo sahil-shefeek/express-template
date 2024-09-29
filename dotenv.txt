@@ -4,3 +4,5 @@ DB_USER=root
 DB_PASSWD=password
 DB_NAME=defaultdb
 DB_PORT=13030
+ACCESS_TOKEN_SECRET=require('crypto').randomBytes(64).toString('hex')
+REFRESH_TOKEN_SECRET=require('crypto').randomBytes(64).toString('hex')
