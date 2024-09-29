@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import { apiRouter } from "./routes/api/api.js";
 import { errorHandler } from "./middleware/errorHandler.js";
-import { corsOptions } from "./config/cors.config.js";
+import { corsOptions } from "./config/cors/cors.config.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import renderBranding from "./utils/renderBranding.js";
