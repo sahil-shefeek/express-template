@@ -6,10 +6,12 @@ import { corsOptions } from "./config/cors/cors.config.js";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import renderBranding from "./utils/renderBranding.js";
+import credentials from "./config/cors/credentials.js";
 
 const app = express();
 
 app.use(morgan("short"));
+app.use(credentials);
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(
