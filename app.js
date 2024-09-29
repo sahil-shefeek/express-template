@@ -4,6 +4,7 @@ import { apiRouter } from "./routes/api/api.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { corsOptions } from "./config/cors.config.js";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import renderBranding from "./utils/renderBranding.js";
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(
     extended: true,
   })
 );
+app.use(cookieParser());
 app.use("/api", apiRouter);
 app.use(errorHandler);
 
